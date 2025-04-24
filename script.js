@@ -11,7 +11,6 @@ req.onload = () => {
 req.send();
 
 const main = (data) => {
-  console.log(data);
   const height = 600;
   const width = 1000;
 
@@ -43,7 +42,6 @@ const main = (data) => {
   let treemap = d3.treemap().size([width, height])(hierarchy);
   //return sorted data as videoGametiles
   let videoGameTiles = hierarchy.leaves();
-  console.log(videoGameTiles);
 
   //adding g elements with rect and text to the svg
   let tiles = svg
@@ -112,13 +110,18 @@ const main = (data) => {
 
   tiles
     .append("text")
-    .attr("transform", (d) => {
-      let centerX = (d.x1 - d.x0) / 2;
-      let centerY = (d.y1 - d.y0) / 2;
-      return `translate(${centerX / 5}, ${centerY})`;
-    })
     .style("font-size", "10px")
+    .attr("transform", (d) => {
+      let x = 5;
+      let y = 12;
+      return `translate(${x},${y})`;
+    })
     .text((d) => d.data.name);
+
+  let categories = [];
+  data.children.forEach((element) => {
+    categories.push(element.name);
+  });
 
   const legend = d3
     .select("body")
@@ -130,4 +133,65 @@ const main = (data) => {
     .style("display", "block")
     .style("margin", "auto")
     .style("margin-top", "2rem");
+
+  const legendElement = legend
+    .selectAll("g")
+    .data(categories)
+    .enter()
+    .append("g")
+    .attr("transform", (d, i) => {
+      let x = i * 100;
+      let y = 25;
+      if (i > 9) {
+        y = 100;
+        x = (i - 9) * 100;
+      }
+      return `translate(${x}, ${y})`;
+    });
+  legendElement.append("text").text((d) => d);
+  legendElement
+    .append("rect")
+    .attr("class", "legend-item")
+    .attr("height", 25)
+    .attr("width", 25)
+    .attr("fill", (d, i) => {
+      switch (d) {
+        case "Wii":
+          return "#ccccff";
+        case "DS":
+          return "#ccffcc";
+        case "X360":
+          return "#ffff99";
+        case "GB":
+          return "#cc99ff";
+        case "PS3":
+          return "#9999ff";
+        case "NES":
+          return "#ffb399";
+        case "PS2":
+          return "#99ffe6";
+        case "3DS":
+          return "#99e6ff";
+        case "PS4":
+          return "#d2ff4d";
+        case "SNES":
+          return "#3399ff";
+        case "PS":
+          return "#ff3333";
+        case "N64":
+          return "#e6e6e6";
+        case "GBA":
+          return "#e6b3e6";
+        case "XB":
+          return "#ff944d";
+        case "PC":
+          return "#ff1a1a";
+        case "2600":
+          return "#ff4dff";
+        case "PSP":
+          return "#aaaa55";
+        case "XOne":
+          return "#6666ff";
+      }
+    });
 };
