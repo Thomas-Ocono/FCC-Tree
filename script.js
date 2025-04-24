@@ -15,7 +15,13 @@ const main = (data) => {
   const width = 1000;
 
   //create the tooltip
-  const tooltip = d3.select("body").append("div").attr("id", "tooltip");
+  const tooltip = d3
+    .select("body")
+    .append("div")
+    .attr("id", "tooltip")
+    .style("background-color", "gray")
+    .style("border-radius", "5px")
+    .style("opacity", 0);
 
   //creating the svg to draw on
   const svg = d3
@@ -106,6 +112,18 @@ const main = (data) => {
         case "XOne":
           return "#6666ff";
       }
+    })
+    .on("mouseover", (d) => {
+      tooltip.style("opacity", 0.9);
+      tooltip.style("position", "absolute");
+      tooltip.style("left", d3.event.pageX + "px");
+      tooltip.style("top", d3.event.pageY - 50 + "px");
+      tooltip.style("padding", "10px");
+      tooltip.attr("data-value", d.data.value);
+      tooltip.text(`Name: ${d.data.name}`);
+    })
+    .on("mouseout", (d) => {
+      tooltip.style("opacity", 0);
     });
 
   tiles
